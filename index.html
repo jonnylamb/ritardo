@@ -27,6 +27,30 @@
     </table>
     </div>
 
+    <script id="detailsOk" type="text/template">
+      <td class="text-success" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <%- minsLate %> min
+      </td>
+    </script>
+
+    <script id="detailsLate" type="text/template">
+      <td class="text-danger" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <%- minsLate %> min
+      </td>
+    </script>
+
+    <script id="detailsEarly" type="text/template">
+      <td class="text-warning" title="<%- minsLate %> min early <%- verb %> <%- stationName %>">
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> <%- minsLate %> min early
+      </td>
+    </script>
+
+    <script id="detailsNoData" type="text/template">
+      <td class="text-muted">
+        No data
+      </td>
+    </script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>

@@ -92,6 +92,30 @@ var Ritardo = {
         });
     },
 
+    findTrain: function(trains, unique) {
+        return _.find(trains, function(train) {
+            return (train.number() == unique.number());
+        });
+    },
+
+    createDetails: function(station, key, verb, earlyIsBad) {
+        var templ;
+        var lateness = station[key];
+
+        if (lateness === 0 || (lateness < 0 && !earlyIsBad))
+            templ = _.template($("#detailsOk").text());
+        else if (lateness < 0 && earlyIsBad)
+            templ = _.template($("#detailsEarly").text());
+        else
+            templ = _.template($("#detailsLate").text());
+
+        return templ({
+            stationName: station.stazione,
+            verb: verb,
+            minsLate: lateness
+        });
+    },
+
     _gotTrainData: function(results) {
         Ritardo.setLoadingText("Processing train data...");
 
@@ -107,48 +131,7 @@ var Ritardo = {
             $("#header-leaving-arriving").append($("<th>Leaving</th><th>Arriving</th>"));
         });
 
-        Ritardo.setLoadingText("Getting templates...");
-        var okDeferred = $.get("templates/details-ok.html");
-        var lateDeferred = $.get("templates/details-late.html");
-        var earlyDeferred = $.get("templates/details-early.html");
-        var naDeferred = $.get("templates/details-na.html");
-
-        $.when(okDeferred, lateDeferred, earlyDeferred, naDeferred).done(
-            function(okData, lateData, earlyData, naData) {
-                Ritardo._gotTemplates(results, uniques,
-                                      okData[0], lateData[0], earlyData[0], naData[0]);
-            });
-    },
-
-    findTrain: function(trains, unique) {
-        return _.find(trains, function(train) {
-            return (train.number() == unique.number());
-        });
-    },
-
-    createDetails: function(station, key, verb, ok, late, early, earlyIsBad) {
-        var templ;
-        var lateness = station[key];
-
-        if (lateness === 0 || (lateness < 0 && !earlyIsBad))
-            templ = ok;
-        else if (lateness < 0 && earlyIsBad)
-            templ = early;
-        else
-            templ = late;
-
-        return templ({
-            stationName: station.stazione,
-            verb: verb,
-            minsLate: Math.abs(lateness)
-        });
-    },
-
-    _gotTemplates: function(results, uniques, okData, lateData, earlyData, naData) {
-        var ok = _.template(okData);
-        var late = _.template(lateData);
-        var early = _.template(earlyData);
-        var na = _.template(naData);
+        Ritardo.setLoadingText("Filling table...");
 
         // start filling in the real data
         for (var date in results) {
@@ -161,21 +144,16 @@ var Ritardo = {
 
                 // when there is no information about the train
                 if (train === null) {
-                    row.append(na());
-                    row.append(na());
+                    var templ = _.template($("#detailsNoData").text());
+                    row.append(templ);
+                    row.append(templ);
                     return; // continue
                 }
 
                 row.append(Ritardo.createDetails(train.fromStation,
-                                                 "ritardoPartenza", "leaving",
-                                                 // todo: remove templates from here
-                                                 ok, late, early,
-                                                 true));
+                                                 "ritardoPartenza", "leaving", true));
                 row.append(Ritardo.createDetails(train.toStation,
-                                                 "ritardoArrivo", "arriving into",
-                                                 // todo: and here
-                                                 ok, late, early,
-                                                 false));
+                                                 "ritardoArrivo", "arriving into", false));
             });
 
             $("#data").append(row);

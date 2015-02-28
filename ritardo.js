@@ -164,6 +164,7 @@ var Ritardo = {
     },
 
     setLoadingText: function(text) {
-        $("#loading").html($("<img src=\"images/loading.gif\"> " + text + "</p>"));
+        var template = _.template($("#loadingTemplate").text());
+        $("#loading").html(template({text: text}));
     },
 };

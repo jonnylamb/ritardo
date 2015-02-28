@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ritardo</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  </head>
+
+  <body>
+    <div id="content"></div>
+
+    <div class="table-responsive">
+    <table class="table table-hover table-responsive" id="trains" style="display: none">
+      <thead>
+        <tr id="header-times">
+          <th rowspan="2">Date</th>
+          <!-- th here for each train departure time -->
+        </tr>
+        <tr id="header-leaving-arriving">
+          <!-- two ths here for each train -->
+        </tr>
+      </thead>
+      <tbody id="data">
+        <!-- trs here for each date -->
+      </tbody>
+    </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js"></script>
+    <script src="ritardo.js"></script>
+    <script>
+      window.onload = Ritardo.go("ROMA TUSCOLANA", "QUATTRO VENTI");
+    </script>
+  </body>
+</html>

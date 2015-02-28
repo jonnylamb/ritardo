@@ -39,7 +39,8 @@ var Ritardo = {
         var content = $("#content");
 
         // title
-        content.append($("<h1>Trains between " + from + " and " + to + "</h1>"));
+        var template = _.template($("#headerTemplate").text());
+        content.append(template({from: from, to: to}));
 
         // spinner
         content.append($("<p></p>").attr("id", "loading"));

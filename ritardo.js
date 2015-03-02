@@ -138,7 +138,7 @@ var Ritardo = {
         for (var date in results) {
             var d = new Date(date);
             var row = $("<tr>");
-            $("<td>").text(d.toDateString()).css("white-space", "nowrap").appendTo(row);
+            $("<td>").text(d.toDateString()).addClass("nowrap").appendTo(row);
 
             _.each(uniques, function(unique) {
 

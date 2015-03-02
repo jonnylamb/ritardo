@@ -53,3 +53,4 @@ Todo
 * fix broken header times like 14:60
 * use require.js
 * cache templates
+* put weird style="..." stuff in a css file

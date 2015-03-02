@@ -137,7 +137,8 @@ var Ritardo = {
         // start filling in the real data
         for (var date in results) {
             var d = new Date(date);
-            var row = $("<tr><td>" + d.toDateString() + "</td></tr>");
+            var row = $("<tr>");
+            $("<td>").text(d.toDateString()).css("white-space", "nowrap").appendTo(row);
 
             _.each(uniques, function(unique) {
 

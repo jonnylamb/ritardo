@@ -128,8 +128,12 @@ var Ritardo = {
         _.each(uniques, function(t) {
             var d = t.time();
             var s = d.getHours() + ":" + (d.getMinutes()+1);
-            $("#header-times").append($("<th></th>").attr("colspan", "2").text(s));
-            $("#header-leaving-arriving").append($("<th>Leaving</th><th>Arriving</th>"));
+            $("#header-times")
+                .append($("<th></th>")
+                        .attr("colspan", "2")
+                        .text(s));
+            $("#header-leaving-arriving")
+                .append($("<th>Leaving</th><th>Arriving</th>"));
         });
 
         Ritardo.setLoadingText("Filling table...");
@@ -139,7 +143,10 @@ var Ritardo = {
         _.each(keys.sort(), function(date) {
             var d = new Date(date);
             var row = $("<tr>");
-            $("<td>").text(d.toDateString()).addClass("nowrap").appendTo(row);
+            $("<td>")
+                .text(d.toDateString())
+                .addClass("nowrap")
+                .appendTo(row);
 
             _.each(uniques, function(unique) {
 

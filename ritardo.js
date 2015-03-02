@@ -153,7 +153,7 @@ var Ritardo = {
                 var train = Ritardo.findTrain(results[date], unique);
 
                 // when there is no information about the train
-                if (train === undefined) {
+                if (train === undefined || !train.hasStations) {
                     var templ = _.template($("#detailsNoData").text());
                     row.append(templ);
                     row.append(templ);

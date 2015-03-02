@@ -135,7 +135,8 @@ var Ritardo = {
         Ritardo.setLoadingText("Filling table...");
 
         // start filling in the real data
-        for (var date in results) {
+        var keys = _.keys(results);
+        _.each(keys.sort(), function(date) {
             var d = new Date(date);
             var row = $("<tr>");
             $("<td>").text(d.toDateString()).addClass("nowrap").appendTo(row);
@@ -159,7 +160,7 @@ var Ritardo = {
             });
 
             $("#data").append(row);
-        }
+        });
 
         $("#loading").remove();
         $("#trains").show();

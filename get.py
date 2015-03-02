@@ -69,8 +69,13 @@ def train(number, geton, getoff):
     path = os.path.join(dirname(), '%s.json' % number)
 
     if not os.path.exists(path):
-        with open(path, 'w') as f:
+        try:
             j = andamento(number)
+        except:
+            print 'train number %s failed; skipping.' % number
+            return
+
+        with open(path, 'w') as f:
             print '%s -> %s' % (j['origine'], j['destinazione'])
             t = json.dumps(j, indent=2)
             f.write(t)

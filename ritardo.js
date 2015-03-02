@@ -76,21 +76,21 @@ var Ritardo = {
     },
 
     getUniqueTrains: function(results) {
-        var uniques = {};
+        var trains = _.reduce(results, function(memo, result) {
+            return memo.concat(_.filter(result, function(train) {
+                return train.hasStations;
+            }));
+        }, []);
 
-        _.each(results, function(trains) {
-            _.each(trains, function(train) {
-                if (!(train.number() in uniques) && train.hasStations) {
-                    uniques[train.number()] = train;
-                }
-            });
+        var sortedTrains = _.sortBy(trains, function(train) {
+            return train.time()
         });
 
-        uniques = _.values(uniques);
-
-        return uniques.sort(function(a, b) {
-            return a.time() - b.time();
+        var uniqueTrains = _.uniq(sortedTrains, false, function(train) {
+            return train.number();
         });
+
+        return uniqueTrains;
     },
 
     findTrain: function(trains, unique) {

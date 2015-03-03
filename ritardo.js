@@ -103,7 +103,8 @@ var Ritardo = {
         var templ;
         var lateness = station[key];
 
-        if (lateness === 0 || (lateness < 0 && !earlyIsBad))
+        // up to and including three minutes late is fine
+        if ((lateness <= 3 && lateness >= 0) || (lateness < 0 && !earlyIsBad))
             templ = _.template($("#detailsOk").text());
         else if (lateness < 0 && earlyIsBad)
             templ = _.template($("#detailsEarly").text());

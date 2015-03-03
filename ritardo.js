@@ -160,10 +160,16 @@ var Ritardo = {
                     return; // continue
                 }
 
-                cell.append(Ritardo.createDetails(train.fromStation,
-                                                 "ritardoPartenza", "leaving", true));
-                cell.append(Ritardo.createDetails(train.toStation,
-                                                 "ritardoArrivo", "arriving into", false));
+                var details;
+
+                details = Ritardo.createDetails(train.fromStation,
+                                                "ritardoPartenza",
+                                                "leaving", true);
+                cell.append(details);
+                details = Ritardo.createDetails(train.toStation,
+                                                "ritardoArrivo",
+                                                "arriving into", false);
+                cell.append(details);
             });
 
             $("#data").append(row);

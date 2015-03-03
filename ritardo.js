@@ -130,11 +130,8 @@ var Ritardo = {
             var d = t.time();
             var s = d.getHours() + ":" + (d.getMinutes()+1);
             $("#header-times")
-                .append($("<th></th>")
-                        .attr("colspan", "2")
+                .append($("<th>")
                         .text(s));
-            $("#header-leaving-arriving")
-                .append($("<th>Leaving</th><th>Arriving</th>"));
         });
 
         Ritardo.setLoadingText("Filling table...");
@@ -153,17 +150,19 @@ var Ritardo = {
 
                 var train = Ritardo.findTrain(results[date], unique);
 
+                var cell = $("<td>").appendTo(row);
+
                 // when there is no information about the train
                 if (train === undefined || !train.hasStations) {
                     var templ = _.template($("#detailsNoData").text());
-                    row.append(templ);
-                    row.append(templ);
+                    cell.append(templ);
+                    cell.append(templ);
                     return; // continue
                 }
 
-                row.append(Ritardo.createDetails(train.fromStation,
+                cell.append(Ritardo.createDetails(train.fromStation,
                                                  "ritardoPartenza", "leaving", true));
-                row.append(Ritardo.createDetails(train.toStation,
+                cell.append(Ritardo.createDetails(train.toStation,
                                                  "ritardoArrivo", "arriving into", false));
             });
 

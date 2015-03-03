@@ -20,11 +20,8 @@
     <table class="table table-hover table-responsive" id="trains" style="display: none">
       <thead>
         <tr id="header-times">
-          <th rowspan="2">Date</th>
+          <th>Date</th>
           <!-- th here for each train departure time -->
-        </tr>
-        <tr id="header-leaving-arriving">
-          <!-- two ths here for each train -->
         </tr>
       </thead>
       <tbody id="data">
@@ -34,27 +31,27 @@
     </div>
 
     <script id="detailsOk" type="text/template">
-      <td class="text-success" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
+      <p class="text-success" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
         <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <%- minsLate %> min
-      </td>
+      </p>
     </script>
 
     <script id="detailsLate" type="text/template">
-      <td class="text-danger" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
+      <p class="text-danger" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <%- minsLate %> min
-      </td>
+      </p>
     </script>
 
     <script id="detailsEarly" type="text/template">
-      <td class="text-warning" title="<%- minsLate %> min early <%- verb %> <%- stationName %>">
+      <p class="text-warning" title="<%- minsLate %> min early <%- verb %> <%- stationName %>">
         <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> <%- minsLate %> min early
-      </td>
+      </p>
     </script>
 
     <script id="detailsNoData" type="text/template">
-      <td class="text-muted">
+      <p class="text-muted">
         No data
-      </td>
+      </p>
     </script>
 
     <script id="loadingTemplate" type="text/template">

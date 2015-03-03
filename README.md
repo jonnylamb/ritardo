@@ -54,3 +54,4 @@ Todo
 * use require.js
 * cache templates
 * show "levels of lateness" better (1 min late is fine. 10 is not)
+* graphs!

@@ -1,7 +1,10 @@
 require.config({
     "paths": {
+        "templates": "../templates",
         "jquery": "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min",
-        "underscore": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min"
+        "underscore": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min",
+        "tpl": "https://cdn.rawgit.com/jfparadis/requirejs-tpl/master/tpl",
+        "text": "https://cdn.rawgit.com/requirejs/text/master/text"
     }
 });
 

@@ -1,4 +1,11 @@
-define(["jquery", "underscore"], function($, _) {
+define(["jquery", "underscore",
+        "tpl!templates/detailsOk", "tpl!templates/detailsEarly",
+        "tpl!templates/detailsLate", "tpl!templates/detailsNoData",
+        "tpl!templates/header", "tpl!templates/loading"],
+       function($, _,
+                templateDetailsOk, templateDetailsEarly,
+                templateDetailsLate, templateDetailsNoData,
+                templateHeader, templateLoading) {
     var Train = function(data) {
         this.data = data;
 
@@ -40,8 +47,7 @@ define(["jquery", "underscore"], function($, _) {
             var content = $("#content");
 
             // title
-            var template = _.template($("#headerTemplate").text());
-            content.append(template({from: from, to: to}));
+            content.append(templateHeader({from: from, to: to}));
 
             // spinner
             content.append($("<p></p>").attr("id", "loading"));
@@ -106,11 +112,11 @@ define(["jquery", "underscore"], function($, _) {
 
             // up to and including three minutes late is fine
             if ((lateness <= 3 && lateness >= 0) || (lateness < 0 && !earlyIsBad))
-                templ = _.template($("#detailsOk").text());
+                templ = templateDetailsOk;
             else if (lateness < 0 && earlyIsBad)
-                templ = _.template($("#detailsEarly").text());
+                templ = templateDetailsEarly;
             else
-                templ = _.template($("#detailsLate").text());
+                templ = templateDetailsLate;
 
             return templ({
                 stationName: station.stazione,
@@ -155,9 +161,8 @@ define(["jquery", "underscore"], function($, _) {
 
                     // when there is no information about the train
                     if (train === undefined || !train.hasStations) {
-                        var templ = _.template($("#detailsNoData").text());
-                        cell.append(templ);
-                        cell.append(templ);
+                        cell.append(templateDetailsNoData);
+                        cell.append(templateDetailsNoData);
                         return; // continue
                     }
 
@@ -181,8 +186,7 @@ define(["jquery", "underscore"], function($, _) {
         },
 
         setLoadingText: function(text) {
-            var template = _.template($("#loadingTemplate").text());
-            $("#loading").html(template({text: text}));
+            $("#loading").html(templateLoading({text: text}));
         },
     };
 

@@ -51,6 +51,5 @@ Todo
 ----
 
 * fix broken header times like 14:60
-* cache templates
 * show "levels of lateness" better (1 min late is fine. 10 is not)
 * graphs!

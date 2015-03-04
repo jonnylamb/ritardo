@@ -30,38 +30,6 @@
     </table>
     </div>
 
-    <script id="detailsOk" type="text/template">
-      <p class="text-success" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
-        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <%- minsLate %> min
-      </p>
-    </script>
-
-    <script id="detailsLate" type="text/template">
-      <p class="text-danger" title="<%- minsLate %> min late <%- verb %> <%- stationName %>">
-        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <%- minsLate %> min
-      </p>
-    </script>
-
-    <script id="detailsEarly" type="text/template">
-      <p class="text-warning" title="<%- minsLate %> min early <%- verb %> <%- stationName %>">
-        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> <%- minsLate %> min early
-      </p>
-    </script>
-
-    <script id="detailsNoData" type="text/template">
-      <p class="text-muted">
-        No data
-      </p>
-    </script>
-
-    <script id="loadingTemplate" type="text/template">
-      <img src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/themes/default/throbber.gif"><%- text %>
-    </script>
-
-    <script id="headerTemplate" type="text/template">
-      <h1>Trains between <%- from %> and <%- to %></h1>
-    </script>
-
     <script data-main="js/app" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.16/require.min.js"></script>
   </body>
 </html>

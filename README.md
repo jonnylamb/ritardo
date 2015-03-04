@@ -14,7 +14,7 @@ part is in JavaScript.
   saved to `filelist.json`.
 * `index.html` is the static starting point for the browser and also
   contains the stations the user is interested in at the bottom.
-* `ritardo.js` contains the JavaScript functions which download the
+* `js/ritardo.js` contains the JavaScript functions which download the
   previously saved JSON files and generates a table showing the
   lateness of the trains.
 
@@ -42,9 +42,9 @@ More for my reference because you really don't want to use this:
    using their train number
 2. run `get.py` and download some JSON files
 3. generate `filelist.json` by `python filelist.py > filelist.json`
-4. edit `index.html` at the end and replace `ROMA TUSCOLANA` and
+4. edit `js/app.js` at the end and replace `ROMA TUSCOLANA` and
    `QUATTRO VENTI` with the stations you're interested in.
-5. put the generated files, `index.html`, and `ritardo.js` on a
+5. put the generated files, `index.html`, and the `js/` directory on a
    webserver and load the page in your browser.
 
 Todo

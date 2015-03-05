@@ -1,8 +1,8 @@
-define(["jquery", "underscore",
+define(["jquery", "underscore", "moment",
         "tpl!templates/detailsOk", "tpl!templates/detailsEarly",
         "tpl!templates/detailsLate", "tpl!templates/detailsNoData",
         "tpl!templates/header", "tpl!templates/loading"],
-       function($, _,
+       function($, _, moment,
                 templateDetailsOk, templateDetailsEarly,
                 templateDetailsLate, templateDetailsNoData,
                 templateHeader, templateLoading) {
@@ -34,11 +34,10 @@ define(["jquery", "underscore",
             // the official time of the stop whereas the latter is one
             // minute behind. adding 1 min to the timestamp so it
             // doesn't have to be though about later is easiest.
-            var d = new Date(s.programmata + 1000*60);
+            var d = moment(s.programmata).add(1, "minutes");
 
-            d.setFullYear(1970);
-            d.setMonth(1); // not sure if these are actually zero
-            d.setDate(1); // indexed, but it doesn't matter in this case
+            // we just want the time so set a fixed date
+            d = d.year(2015).month(0).date(1);
 
             return d;
         };
@@ -143,8 +142,9 @@ define(["jquery", "underscore",
             }
 
             _.each(uniques, function(t) {
-                var d = t.time();
-                var s = pad(d.getHours()) + ":" + pad(d.getMinutes());
+                var s = t.time()
+                    .format("HH:mm");
+
                 $("#header-times")
                     .append($("<th>")
                             .text(s));
@@ -155,10 +155,10 @@ define(["jquery", "underscore",
             // start filling in the real data
             var keys = _.keys(results);
             _.each(keys.sort(), function(date) {
-                var d = new Date(date);
+                var d = moment(date);
                 var row = $("<tr>");
                 $("<td>")
-                    .text(d.toDateString())
+                    .text(d.format("ddd Do MMMM YYYY"))
                     .addClass("nowrap")
                     .appendTo(row);
 

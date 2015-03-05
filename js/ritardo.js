@@ -29,7 +29,12 @@ define(["jquery", "underscore",
 
         this.time = function() {
             var s = this.fromStation;
-            var d = new Date(s.programmata);
+            // the two keys per station that seem legit are
+            // 'programmata' and 'effettiva'. the former just isn't
+            // the official time of the stop whereas the latter is one
+            // minute behind. adding 1 min to the timestamp so it
+            // doesn't have to be though about later is easiest.
+            var d = new Date(s.programmata + 1000*60);
 
             d.setFullYear(1970);
             d.setMonth(1); // not sure if these are actually zero
@@ -133,9 +138,13 @@ define(["jquery", "underscore",
 
             Ritardo.setLoadingText("Updating table headings...");
 
+            function pad(n) {
+                return (n < 10) ? ("0" + n) : n;
+            }
+
             _.each(uniques, function(t) {
                 var d = t.time();
-                var s = d.getHours() + ":" + (d.getMinutes()+1);
+                var s = pad(d.getHours()) + ":" + pad(d.getMinutes());
                 $("#header-times")
                     .append($("<th>")
                             .text(s));

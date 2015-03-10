@@ -52,3 +52,4 @@ Todo
 
 * show "levels of lateness" better (1 min late is fine. 10 is not)
 * graphs!
+* error handling when train data 404s

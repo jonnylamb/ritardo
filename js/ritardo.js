@@ -1,7 +1,10 @@
 define(["jquery", "underscore", "moment",
+        // templates
         "tpl!templates/detailsOk", "tpl!templates/detailsEarly",
         "tpl!templates/detailsLate", "tpl!templates/detailsNoData",
-        "tpl!templates/header", "tpl!templates/loading"],
+        "tpl!templates/header", "tpl!templates/loading",
+        // jquery extension
+        "jquery.whenall"],
        function($, _, moment,
                 templateDetailsOk, templateDetailsEarly,
                 templateDetailsLate, templateDetailsNoData,
@@ -81,9 +84,12 @@ define(["jquery", "underscore", "moment",
                 });
             });
 
-            $.when.apply(window, deferreds).then(function() {
-                Ritardo._gotTrainData(results);
-            });
+            // use whenAll here as all train files need to be
+            // downloaded before we can move on.
+            $.whenAll.apply(window, deferreds)
+                .always(function() {
+                    Ritardo._gotTrainData(results);
+                });
         },
 
         getUniqueTrains: function(results) {

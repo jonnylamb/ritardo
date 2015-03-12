@@ -42,10 +42,18 @@ FROM = [
     7453,
 ]
 
+# requests.Response.json change from a dict to an instance method at
+# some point
+def get_json(r):
+    if isinstance(r.json, dict):
+        return r.json
+    else:
+        return r.json()
+
 def partenza(number):
     url  = 'http://www.viaggiatreno.it/viaggiatrenonew/resteasy/viaggiatreno/cercaNumeroTreno/' + str(number)
     r = requests.get(url)
-    j = r.json()
+    j = get_json(r)
 
     return j['codLocOrig']
 
@@ -54,7 +62,7 @@ def andamento(number):
 
     url = 'http://www.viaggiatreno.it/viaggiatrenonew/resteasy/viaggiatreno/andamentoTreno/%s/%s' % (station, number)
     r = requests.get(url)
-    return r.json()
+    return get_json(r)
 
 def dirname():
     now = datetime.now()

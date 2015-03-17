@@ -197,7 +197,7 @@ define(["jquery", "underscore", "moment",
             });
 
             $("#loading").remove();
-            $("#trains").show();
+            $("#trains").show(100);
         },
 
         setLoadingText: function(text) {

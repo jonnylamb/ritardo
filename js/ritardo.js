@@ -3,12 +3,13 @@ define(["jquery", "underscore", "moment",
         "tpl!templates/detailsOk", "tpl!templates/detailsEarly",
         "tpl!templates/detailsLate", "tpl!templates/detailsNoData",
         "tpl!templates/header", "tpl!templates/loading",
+        "tpl!templates/progress",
         // jquery extension
         "jquery.whenall"],
        function($, _, moment,
                 templateDetailsOk, templateDetailsEarly,
                 templateDetailsLate, templateDetailsNoData,
-                templateHeader, templateLoading) {
+                templateHeader, templateLoading, templateProgress) {
     var Train = function(data) {
         this.data = data;
 
@@ -65,6 +66,16 @@ define(["jquery", "underscore", "moment",
             $.ajax("filelist.json").done(Ritardo._gotFileList);
         },
 
+        updateProgress: function(results, deferreds) {
+            var done = 0;
+            for (date in results)
+                done += results[date].length;
+
+            var percentage = Math.floor((done / deferreds.length) * 100);
+            $("#train-progress").css("width", percentage + "%");
+            $("#train-progress").attr("aria-valuenow", percentage);
+        },
+
         _gotFileList: function(filelist) {
             Ritardo.setLoadingText("Getting train data...");
 
@@ -78,11 +89,15 @@ define(["jquery", "underscore", "moment",
 
                     d.done(function(data) {
                         results[date].push(new Train(data));
+                        Ritardo.updateProgress(results, deferreds);
                     });
 
                     deferreds.push(d);
                 });
             });
+
+            // add progressbar
+            $("#loading").append(templateProgress({percentage: 0}));
 
             // use whenAll here as all train files need to be
             // downloaded before we can move on.

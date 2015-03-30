@@ -63,7 +63,10 @@ define(["jquery", "underscore", "moment",
 
             // go!
             Ritardo.setLoadingText("Getting train list...");
-            $.ajax("filelist.json").done(Ritardo._gotFileList);
+            $.ajax({
+                url: "filelist.json",
+                cache: false
+            }).done(Ritardo._gotFileList);
         },
 
         updateProgress: function(results, deferreds) {

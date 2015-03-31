@@ -139,12 +139,14 @@ define(["jquery", "underscore", "moment",
             var lateness = station[key];
 
             // up to and including three minutes late is fine
-            if ((lateness <= 3 && lateness >= 0) || (lateness < 0 && !earlyIsBad))
+            if ((lateness <= 3 && lateness >= 0) || (lateness < 0 && !earlyIsBad)) {
                 templ = templateDetailsOk;
-            else if (lateness < 0 && earlyIsBad)
+            } else if (lateness < 0 && earlyIsBad) {
                 templ = templateDetailsEarly;
-            else
+                lateness = Math.abs(lateness);
+            } else {
                 templ = templateDetailsLate;
+            }
 
             return templ({
                 stationName: station.stazione,

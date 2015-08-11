@@ -13,13 +13,13 @@ define(["jquery", "underscore", "moment",
     var Train = function(data) {
         this.data = data;
 
-        this.findStation = function(name) {
+        this.findStation = _.memoize(function(name) {
             return _.find(this.data.fermate, function(stop) {
                 return (stop.stazione == name);
             });
-        };
+        });
 
-        this.stations = function(fromName, toName) {
+        this.stations = _.memoize(function(fromName, toName) {
             var from = this.findStation(fromName);
             var to = this.findStation(toName);
 
@@ -27,7 +27,7 @@ define(["jquery", "underscore", "moment",
                 return [from, to];
 
             return undefined;
-        };
+        });
 
         this.number = function() {
             return this.data.numeroTreno;

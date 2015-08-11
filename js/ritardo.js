@@ -10,29 +10,31 @@ define(["jquery", "underscore", "moment",
                 templateDetailsOk, templateDetailsEarly,
                 templateDetailsLate, templateDetailsNoData,
                 templateHeader, templateLoading, templateProgress) {
-    var Train = function(data, from, to) {
+    var Train = function(data) {
         this.data = data;
 
-        this.fromStation = null;
-        this.toStation = null;
-        this.hasStations = false;
+        this.findStation = function(name) {
+            return _.find(this.data.fermate, function(stop) {
+                return (stop.stazione == name);
+            });
+        };
 
-        var matches = _.filter(this.data.fermate, function(stop) {
-            return (stop.stazione == from ||
-                    stop.stazione == to);
-        });
-        if (matches.length == 2) {
-            this.fromStation = matches[0];
-            this.toStation = matches[1];
-            this.hasStations = true;
-        }
+        this.stations = function(fromName, toName) {
+            var from = this.findStation(fromName);
+            var to = this.findStation(toName);
+
+            if (from && to)
+                return [from, to];
+
+            return undefined;
+        };
 
         this.number = function() {
             return this.data.numeroTreno;
         };
 
-        this.time = function() {
-            var s = this.fromStation;
+        this.time = function(stationName) {
+            var s = this.findStation(stationName);
             // the two keys per station that seem legit are
             // 'programmata' and 'effettiva'. the former just isn't
             // the official time of the stop whereas the latter is one
@@ -95,7 +97,7 @@ define(["jquery", "underscore", "moment",
                     var d = $.ajax(date + "/" + filename);
 
                     d.done(_.bind(function(data) {
-                        results[date].push(new Train(data, this.from, this.to));
+                        results[date].push(new Train(data));
                         this.updateProgress(results, deferreds);
                     }, this));
 
@@ -115,15 +117,15 @@ define(["jquery", "underscore", "moment",
         };
 
         this.getUniqueTrains = function(results) {
-            var trains = _.reduce(results, function(memo, result) {
-                return memo.concat(_.filter(result, function(train) {
-                    return train.hasStations;
-                }));
-            }, []);
+            var trains = _.reduce(results, _.bind(function(memo, result) {
+                return memo.concat(_.filter(result, _.bind(function(train) {
+                    return train.stations(this.from, this.to) !== undefined;
+                }, this)));
+            }, this), []);
 
-            var sortedTrains = _.sortBy(trains, function(train) {
-                return train.time()
-            });
+            var sortedTrains = _.sortBy(trains, _.bind(function(train) {
+                return train.time(this.from)
+            }, this));
 
             var uniqueTrains = _.uniq(sortedTrains, false, function(train) {
                 return train.number();
@@ -171,14 +173,14 @@ define(["jquery", "underscore", "moment",
                 return (n < 10) ? ("0" + n) : n;
             }
 
-            _.each(uniques, function(t) {
-                var s = t.time()
+            _.each(uniques, _.bind(function(t) {
+                var s = t.time(this.from)
                     .format("HH:mm");
 
                 $("#header-times")
                     .append($("<th>")
                             .text(s));
-            });
+            }, this));
 
             this.setLoadingText("Filling table...");
 
@@ -197,20 +199,22 @@ define(["jquery", "underscore", "moment",
 
                     var cell = $("<td>").appendTo(row);
 
+                    var stations = train ?
+                        train.stations(this.from, this.to) :
+                        undefined;
+
                     // when there is no information about the train
-                    if (train === undefined || !train.hasStations) {
+                    if (!train || !stations) {
                         cell.append(templateDetailsNoData);
                         cell.append(templateDetailsNoData);
                         return; // continue
                     }
 
-                    var details;
-
-                    details = this.createDetails(train.fromStation,
+                    var details = this.createDetails(stations[0],
                                                  "ritardoPartenza",
                                                  "leaving", true);
                     cell.append(details);
-                    details = this.createDetails(train.toStation,
+                    details = this.createDetails(stations[1],
                                                  "ritardoArrivo",
                                                  "arriving into", false);
                     cell.append(details);

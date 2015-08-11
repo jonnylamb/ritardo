@@ -10,5 +10,6 @@ require.config({
 });
 
 require(["ritardo"], function(Ritardo) {
-    Ritardo.go("ROMA TUSCOLANA", "QUATTRO VENTI");
+    var r = new Ritardo("ROMA TUSCOLANA", "QUATTRO VENTI");
+    r.go();
 });

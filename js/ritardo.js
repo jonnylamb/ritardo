@@ -10,7 +10,7 @@ define(["jquery", "underscore", "moment",
                 templateDetailsOk, templateDetailsEarly,
                 templateDetailsLate, templateDetailsNoData,
                 templateHeader, templateLoading, templateProgress) {
-    var Train = function(data) {
+    var Train = function(data, from, to) {
         this.data = data;
 
         this.fromStation = null;
@@ -18,8 +18,8 @@ define(["jquery", "underscore", "moment",
         this.hasStations = false;
 
         var matches = _.filter(this.data.fermate, function(stop) {
-            return (stop.stazione == Ritardo.FROM ||
-                    stop.stazione == Ritardo.TO);
+            return (stop.stazione == from ||
+                    stop.stazione == to);
         });
         if (matches.length == 2) {
             this.fromStation = matches[0];
@@ -47,11 +47,15 @@ define(["jquery", "underscore", "moment",
         };
     };
 
-    var Ritardo = {
-        go: function(from, to) {
-            Ritardo.FROM = from;
-            Ritardo.TO = to;
+    var Ritardo = function(from, to) {
+        this.from = from;
+        this.to = to;
 
+        this.setLoadingText = function(text) {
+            $("#loading").html(templateLoading({text: text}));
+        };
+
+        this.go = function() {
             var content = $("#content");
 
             // title
@@ -59,17 +63,17 @@ define(["jquery", "underscore", "moment",
 
             // spinner
             content.append($("<p></p>").attr("id", "loading"));
-            Ritardo.setLoadingText("Loading...");
+            this.setLoadingText("Loading...");
 
             // go!
-            Ritardo.setLoadingText("Getting train list...");
+            this.setLoadingText("Getting train list...");
             $.ajax({
                 url: "filelist.json",
                 cache: false
-            }).done(Ritardo._gotFileList);
-        },
+            }).done(_.bind(this._gotFileList, this));
+        };
 
-        updateProgress: function(results, deferreds) {
+        this.updateProgress = function(results, deferreds) {
             var done = 0;
             for (date in results)
                 done += results[date].length;
@@ -77,27 +81,27 @@ define(["jquery", "underscore", "moment",
             var percentage = Math.floor((done / deferreds.length) * 100);
             $("#train-progress").css("width", percentage + "%");
             $("#train-progress").attr("aria-valuenow", percentage);
-        },
+        };
 
-        _gotFileList: function(filelist) {
-            Ritardo.setLoadingText("Getting train data...");
+        this._gotFileList = function(filelist) {
+            this.setLoadingText("Getting train data...");
 
             var results = {};
             var deferreds = [];
 
-            _.each(_.keys(filelist), function(date) {
+            _.each(_.keys(filelist), _.bind(function(date) {
                 results[date] = [];
-                _.each(filelist[date], function(filename) {
+                _.each(filelist[date], _.bind(function(filename) {
                     var d = $.ajax(date + "/" + filename);
 
-                    d.done(function(data) {
-                        results[date].push(new Train(data));
-                        Ritardo.updateProgress(results, deferreds);
-                    });
+                    d.done(_.bind(function(data) {
+                        results[date].push(new Train(data, this.from, this.to));
+                        this.updateProgress(results, deferreds);
+                    }, this));
 
                     deferreds.push(d);
-                });
-            });
+                }, this));
+            }, this));
 
             // add progressbar
             $("#loading").append(templateProgress({percentage: 0}));
@@ -105,12 +109,12 @@ define(["jquery", "underscore", "moment",
             // use whenAll here as all train files need to be
             // downloaded before we can move on.
             $.whenAll.apply(window, deferreds)
-                .always(function() {
-                    Ritardo._gotTrainData(results);
-                });
-        },
+                .always(_.bind(function() {
+                    this.gotTrainData(results);
+                }, this));
+        };
 
-        getUniqueTrains: function(results) {
+        this.getUniqueTrains = function(results) {
             var trains = _.reduce(results, function(memo, result) {
                 return memo.concat(_.filter(result, function(train) {
                     return train.hasStations;
@@ -126,15 +130,15 @@ define(["jquery", "underscore", "moment",
             });
 
             return uniqueTrains;
-        },
+        };
 
-        findTrain: function(trains, unique) {
+        this.findTrain = function(trains, unique) {
             return _.find(trains, function(train) {
                 return (train.number() == unique.number());
             });
-        },
+        };
 
-        createDetails: function(station, key, verb, earlyIsBad) {
+        this.createDetails = function(station, key, verb, earlyIsBad) {
             var templ;
             var lateness = station[key];
 
@@ -153,15 +157,15 @@ define(["jquery", "underscore", "moment",
                 verb: verb,
                 minsLate: lateness
             });
-        },
+        };
 
-        _gotTrainData: function(results) {
-            Ritardo.setLoadingText("Processing train data...");
+        this.gotTrainData = function(results) {
+            this.setLoadingText("Processing train data...");
 
             // get unique list of train numbers from all days
-            var uniques = Ritardo.getUniqueTrains(results);
+            var uniques = this.getUniqueTrains(results);
 
-            Ritardo.setLoadingText("Updating table headings...");
+            this.setLoadingText("Updating table headings...");
 
             function pad(n) {
                 return (n < 10) ? ("0" + n) : n;
@@ -176,11 +180,11 @@ define(["jquery", "underscore", "moment",
                             .text(s));
             });
 
-            Ritardo.setLoadingText("Filling table...");
+            this.setLoadingText("Filling table...");
 
             // start filling in the real data
             var keys = _.keys(results);
-            _.each(keys.sort(), function(date) {
+            _.each(keys.sort(), _.bind(function(date) {
                 var d = moment(date);
                 var row = $("<tr>");
                 $("<td>")
@@ -188,9 +192,8 @@ define(["jquery", "underscore", "moment",
                     .addClass("nowrap")
                     .appendTo(row);
 
-                _.each(uniques, function(unique) {
-
-                    var train = Ritardo.findTrain(results[date], unique);
+                _.each(uniques, _.bind(function(unique) {
+                    var train = this.findTrain(results[date], unique);
 
                     var cell = $("<td>").appendTo(row);
 
@@ -203,26 +206,22 @@ define(["jquery", "underscore", "moment",
 
                     var details;
 
-                    details = Ritardo.createDetails(train.fromStation,
-                                                    "ritardoPartenza",
-                                                    "leaving", true);
+                    details = this.createDetails(train.fromStation,
+                                                 "ritardoPartenza",
+                                                 "leaving", true);
                     cell.append(details);
-                    details = Ritardo.createDetails(train.toStation,
-                                                    "ritardoArrivo",
-                                                    "arriving into", false);
+                    details = this.createDetails(train.toStation,
+                                                 "ritardoArrivo",
+                                                 "arriving into", false);
                     cell.append(details);
-                });
+                }, this));
 
                 $("#data").append(row);
-            });
+            }, this));
 
             $("#loading").remove();
             $("#trains").show(100);
-        },
-
-        setLoadingText: function(text) {
-            $("#loading").html(templateLoading({text: text}));
-        },
+        };
     };
 
     return Ritardo;
